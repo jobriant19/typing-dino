@@ -2,7 +2,7 @@
 // TYPING DINO - Game Engine (vanilla JS + Canvas, pixel art)
 // ============================================================
 
-const API_BASE = '/api';
+const API_BASE = '/game-api';
 
 const WORD_BANK = {
     easy: ['aku','kau','ini','itu','mau','ada','bisa','oke','iya','lho','buku','meja','kursi','pintu',
