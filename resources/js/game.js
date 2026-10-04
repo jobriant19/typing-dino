@@ -153,6 +153,8 @@ function updateAssetLoadingProgress(){
     const label = el('loadingPercent');
     if (fill) fill.style.width = pct + '%';
     if (label) label.textContent = pct + '%';
+    const status = el('loadingStatus');
+    if (status) status.textContent = pct >= 100 ? 'Selesai! Memulai permainan...' : 'Menyiapkan aset permainan...';
 }
 
 function waitForImage(img){
@@ -1792,7 +1794,7 @@ function startGame(difficulty, playerName){
     const isMobile = window.matchMedia('(pointer: coarse)').matches;
     document.body.classList.add('is-playing');
     fitViewport();
-    el('mobileHint').style.display = isMobile ? 'block' : 'none';
+
     if (isMobile){
         const hid = el('hiddenTypingInput');
         hid.focus({ preventScroll: true });

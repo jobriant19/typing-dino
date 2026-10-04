@@ -84,22 +84,36 @@
                     </svg>
                     <span>KEMBALI</span>
                 </button>
-                <button id="continueBtn" class="btn btn-primary" disabled>LANJUTKAN</button>
+                <button id="continueBtn" class="btn btn-primary" disabled>
+                    <span>LANJUT</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
             </div>
             <p id="welcomeMsg" class="form-msg"></p>
 
             <div class="welcome-copyright">
-                <span class="copy-brand">DinoTyping</span>
+                <span class="copy-brand">DINOTYPING</span>
                 <svg class="copy-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="9"/>
                     <path d="M14.9 9.4a3.6 3.6 0 1 0 0 5.2"/>
                 </svg>
                 <span class="copy-year">{{ date('Y') }}</span>
-                <span class="copy-by">by</span>
                 <span class="copy-author">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="8" r="3.6"/>
-                        <path d="M5 20c0-3.6 3-6 7-6s7 2.4 7 6"/>
+                    <svg class="copy-ig" viewBox="0 0 24 24" fill="none" stroke="url(#igGradient)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="igGradient" gradientUnits="userSpaceOnUse" x1="4" y1="21" x2="20" y2="3">
+                                <stop offset="0" stop-color="#feda75"/>
+                                <stop offset="0.28" stop-color="#fa7e1e"/>
+                                <stop offset="0.52" stop-color="#d62976"/>
+                                <stop offset="0.76" stop-color="#962fbf"/>
+                                <stop offset="1" stop-color="#4f5bd5"/>
+                            </linearGradient>
+                        </defs>
+                        <rect x="3" y="3" width="18" height="18" rx="5.2"/>
+                        <circle cx="12" cy="12" r="4.1"/>
+                        <circle cx="17.3" cy="6.7" r="1" fill="url(#igGradient)" stroke="none"/>
                     </svg>
                     jo_briant19
                 </span>
@@ -207,7 +221,6 @@
 
         <div class="game-stage">
             <canvas id="gameCanvas" width="800" height="360"></canvas>
-            <div class="footer-note" id="mobileHint" style="position:absolute; bottom:44px; left:50%; transform:translateX(-50%); display:none;">Tap layar untuk memunculkan keyboard</div>
 
             {{-- Efek nyawa berkurang: muncul di TENGAH layar, bukan hanya di dino --}}
             <div class="heart-lost-effect" id="heartLostEffect">
@@ -384,11 +397,10 @@
         <div class="result-card loading-card">
             <img src="{{ asset('assets/images/logo.png') }}" alt="DinoTyping" class="loading-logo">
             <h2 class="loading-title pixel-font">
-                <span class="ld-full">MEMUAT PERMAINAN...</span>
-                <span class="ld-short">MEMUAT GAME</span>
+                <span>MEMUAT GAME</span>
                 <span class="ld-dots" aria-hidden="true"><i></i><i></i><i></i></span>
             </h2>
-            <p class="loading-sub">Menyiapkan seluruh aset, mohon tunggu sebentar.</p>
+            <p class="loading-sub" id="loadingStatus">Menyiapkan aset permainan...</p>
             <div class="loading-bar-track">
                 <div class="loading-bar-fill" id="loadingBarFill"></div>
             </div>
