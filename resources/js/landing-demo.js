@@ -34,6 +34,22 @@ function updateDemoTutorialText(model){
     const label = el('landingSub');
     if (!label) return;
     label.textContent = DEMO_TUTORIAL_MESSAGES[model] || 'Ketik kata yang muncul sebelum dino tiba!';
+    fitLandingSub();
+}
+
+// Khusus mobile: perkecil font subtitle secukupnya sampai muat SEBARIS.
+// Di desktop ukuran font dikembalikan ke CSS bawaan.
+function fitLandingSub(){
+    const label = el('landingSub');
+    if (!label) return;
+    label.style.fontSize = '';
+    if (!window.matchMedia('(max-width:640px)').matches) return;
+    let size = 10;
+    label.style.fontSize = size + 'px';
+    while (label.scrollWidth > label.clientWidth + 0.5 && size > 5.5){
+        size -= 0.5;
+        label.style.fontSize = size + 'px';
+    }
 }
 
 function createDemoState(){
@@ -163,14 +179,16 @@ let demoGameOverActive = false;
 // supaya suaranya selesai berbunyi tepat sebelum demo lanjut lagi.
 const DEMO_GAMEOVER_DURATION_MS = 4000;
 
+let demoGameOverTimers = [];
+
 function showDemoGameOver(){
     demoGameOverActive = true;
     const banner = el('demoGameOverBanner');
     if (banner) banner.classList.add('show');
     // Jeda 450ms dulu sebelum suara game over, supaya tidak tabrakan dengan
     // suara damage dari nyawa terakhir yang baru hilang.
-    setTimeout(() => { if (G.sfxGameOver) G.sfxGameOver(); }, 450);
-    setTimeout(() => {
+    demoGameOverTimers.push(setTimeout(() => { if (G.sfxGameOver) G.sfxGameOver(); }, 450));
+    demoGameOverTimers.push(setTimeout(() => {
         const banner2 = el('demoGameOverBanner');
         if (banner2) banner2.classList.remove('show');
         const s = getState();
@@ -181,7 +199,7 @@ function showDemoGameOver(){
             s.clearedCount = 0;
         }
         demoGameOverActive = false;
-    }, DEMO_GAMEOVER_DURATION_MS);
+    }, DEMO_GAMEOVER_DURATION_MS));
 }
 
 function demoLoop(now){
@@ -219,6 +237,11 @@ function startDemo(){
 function stopDemo(){
     demoRunning = false;
     isDemoActive = false;
+    demoGameOverTimers.forEach(clearTimeout);
+    demoGameOverTimers = [];
+    demoGameOverActive = false;
+    const goBanner = el('demoGameOverBanner');
+    if (goBanner) goBanner.classList.remove('show');
     if (demoRafId) cancelAnimationFrame(demoRafId);
     demoRafId = null;
     setState(null);
@@ -233,6 +256,21 @@ document.addEventListener('DOMContentLoaded', () => {
             el('welcomeScreen').style.display = 'flex';
         });
     }
+
+    // Tombol KEMBALI di layar nama pemain -> kembali ke halaman demo
+    const backToLandingBtn = el('backToLandingBtn');
+    if (backToLandingBtn){
+        backToLandingBtn.addEventListener('click', () => {
+            stopDemo();
+            el('welcomeScreen').style.display = 'none';
+            el('landingScreen').style.display = '';
+            Promise.all([G.assetsReadyPromise, G.sfxReadyPromise]).then(() => {
+                if (el('landingScreen').style.display !== 'none') startDemo();
+            });
+        });
+    }
+
+    window.addEventListener('resize', fitLandingSub);
 
     const soundToggleBtn = el('soundToggleBtn');
     if (soundToggleBtn){

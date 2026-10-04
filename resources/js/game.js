@@ -665,7 +665,28 @@ function handleChar(ch){
     }
 }
 
+// Menjaga area permainan tetap terlihat PENUH (tanpa zoom/terpotong) saat
+// keyboard HP terbuka: tinggi & posisi viewport visual dipantau lalu dipakai
+// lewat variabel CSS --vvh / --vvt (lihat body.is-playing di app.css).
+function fitViewport(){
+    const vv = window.visualViewport;
+    const root = document.documentElement;
+    root.style.setProperty('--vvh', (vv ? vv.height : window.innerHeight) + 'px');
+    root.style.setProperty('--vvt', (vv ? vv.offsetTop : 0) + 'px');
+}
+
+function setupViewportFit(){
+    fitViewport();
+    if (window.visualViewport){
+        window.visualViewport.addEventListener('resize', fitViewport);
+        window.visualViewport.addEventListener('scroll', fitViewport);
+    }
+    window.addEventListener('resize', fitViewport);
+    window.addEventListener('orientationchange', fitViewport);
+}
+
 function setupInput(){
+    setupViewportFit();
     const hidden = el('hiddenTypingInput');
     hidden.value = '';
 
@@ -1769,9 +1790,13 @@ function startGame(difficulty, playerName){
     if (el('confirmQuitOverlay')) el('confirmQuitOverlay').classList.add('hidden');
 
     const isMobile = window.matchMedia('(pointer: coarse)').matches;
+    document.body.classList.add('is-playing');
+    fitViewport();
     el('mobileHint').style.display = isMobile ? 'block' : 'none';
     if (isMobile){
-        setTimeout(() => el('hiddenTypingInput').focus(), 300);
+        const hid = el('hiddenTypingInput');
+        hid.focus({ preventScroll: true });
+        setTimeout(() => hid.focus({ preventScroll: true }), 300);
     }
 
     updateHud();
@@ -1855,6 +1880,11 @@ function showEndOverlay(elapsed, accuracy, best){
     el('goTime').textContent = elapsed.toFixed(1) + 's';
     el('goWpm').textContent = wpm;
     el('goHearts').textContent = state.hearts;
+    // Tutup keyboard HP & hentikan guncangan layar supaya kartu hasil
+    // (Game Over / Rekor Baru) tampil penuh dan jelas.
+    el('hiddenTypingInput').blur();
+    const stageEl = el('gameOverOverlay').closest('.game-stage');
+    if (stageEl) stageEl.classList.remove('shake-hit');
     el('gameOverOverlay').classList.remove('hidden');
     sfxGameOver();
 
@@ -1928,11 +1958,20 @@ async function refreshMenuBestLines(){
     }
 }
 
+const BEST_ICON_TROPHY = '<svg class="best-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/><path d="M8 5H5a2 2 0 0 0 0 4h1.5M16 5h3a2 2 0 0 1 0 4h-1.5"/><path d="M12 12v3"/><path d="M9 20h6"/><path d="M10 17h4l.6 3H9.4l.6-3Z"/></svg>';
+const BEST_ICON_SCORE  = '<svg class="best-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.2l2.6 5.4 5.9.8-4.3 4.2 1 5.9L12 16.7l-5.2 2.8 1-5.9L3.5 9.4l5.9-.8L12 3.2Z"/></svg>';
+const BEST_ICON_TIME   = '<svg class="best-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4.3l2.8 1.9"/><path d="M9.5 2.5h5"/></svg>';
+
 function renderBestLine(line, best){
     if (!line) return;
     const scoreTxt = best.highest_score ? best.highest_score : '-';
     const timeTxt = best.fastest_time ? best.fastest_time.toFixed(1) + 's' : '-';
-    line.textContent = `Skor: ${scoreTxt} · Terlama: ${timeTxt}`;
+    line.innerHTML =
+        `<span class="best-title">${BEST_ICON_TROPHY}REKOR</span>` +
+        `<span class="best-vals">` +
+            `<span class="best-val">${BEST_ICON_SCORE}<b>${scoreTxt}</b></span>` +
+            `<span class="best-val">${BEST_ICON_TIME}<b>${timeTxt}</b></span>` +
+        `</span>`;
 }
 
 // ============================================================
@@ -1957,6 +1996,9 @@ function goToDifficultyScreen(){
 }
 
 function initMenu(){
+    // Tampilan awal kartu rekor (sebelum data pemain dimuat)
+    document.querySelectorAll('.best-line').forEach(line => renderBestLine(line, { highest_score: 0, fastest_time: null }));
+
     document.querySelectorAll('.diff-card').forEach(card => {
         card.addEventListener('click', () => {
             document.querySelectorAll('.diff-card').forEach(c => c.classList.remove('active'));
@@ -2002,6 +2044,12 @@ function initMenu(){
         }
         el('menuMsg').textContent = '';
 
+        // Fokus input keyboard SEKARANG (masih dalam gestur ketukan) — kalau
+        // menunggu sampai aset selesai dimuat, HP sering menolak memunculkan keyboard.
+        if (window.matchMedia('(pointer: coarse)').matches){
+            el('hiddenTypingInput').focus({ preventScroll: true });
+        }
+
         const stillLoading = !assetsAreReady;
         if (stillLoading){
             updateAssetLoadingProgress();
@@ -2042,6 +2090,8 @@ function initMenu(){
 }
 
 function backToMenu(){
+    document.body.classList.remove('is-playing');
+    el('hiddenTypingInput').blur();
     if (state && state.rafId) cancelAnimationFrame(state.rafId);
     if (state) { state.running = false; state.paused = false; }
     el('gameOverOverlay').classList.add('hidden');

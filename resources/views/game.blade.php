@@ -10,6 +10,11 @@
         <source src="{{ asset('assets/sounds/backsound.mp3') }}" type="audio/mpeg">
     </audio>
 
+    {{-- Input tersembunyi untuk keyboard HP. Sengaja berada DI LUAR gameScreen (yang
+         display:none sebelum game mulai) supaya bisa di-focus() langsung saat
+         tombol Mulai diketuk -> keyboard HP benar-benar muncul. --}}
+    <input type="text" id="hiddenTypingInput" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-hidden="true" tabindex="-1">
+
     {{-- ===================== HALAMAN PALING AWAL (DEMO OTOMATIS) ===================== --}}
     <section id="landingScreen" class="pixel-panel">
         <div class="diff-logo-wrap">
@@ -66,17 +71,39 @@
     <section id="welcomeScreen" class="screen-center" style="display:none;">
         <div class="pixel-panel welcome-card">
             <img src="{{ asset('assets/images/logo.png') }}" alt="DinoTyping" class="welcome-logo">
-            <p class="brand-sub">Ketik cepat, taklukkan semua rintangan!</p>
 
             <div class="field-group field-center">
                 <label for="playerName">Nama Pemain</label>
                 <input type="text" id="playerName" maxlength="20" placeholder="Masukkan nama kamu..." class="input-center">
             </div>
 
-            <button id="continueBtn" class="btn btn-primary btn-block" disabled>LANJUTKAN</button>
+            <div class="btn-row welcome-actions">
+                <button type="button" id="backToLandingBtn" class="btn btn-danger" aria-label="Kembali ke halaman demo">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    <span>KEMBALI</span>
+                </button>
+                <button id="continueBtn" class="btn btn-primary" disabled>LANJUTKAN</button>
+            </div>
             <p id="welcomeMsg" class="form-msg"></p>
 
-            <p class="footer-note welcome-copyright">DinoTyping &copy; {{ date('Y') }} by <span class="footer-highlight">jo_briant19</span></p>
+            <div class="welcome-copyright">
+                <span class="copy-brand">DinoTyping</span>
+                <svg class="copy-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M14.9 9.4a3.6 3.6 0 1 0 0 5.2"/>
+                </svg>
+                <span class="copy-year">{{ date('Y') }}</span>
+                <span class="copy-by">by</span>
+                <span class="copy-author">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="8" r="3.6"/>
+                        <path d="M5 20c0-3.6 3-6 7-6s7 2.4 7 6"/>
+                    </svg>
+                    jo_briant19
+                </span>
+            </div>
         </div>
     </section>
 
@@ -100,8 +127,8 @@
                     </svg>
                 </div>
                 <h3>EASY</h3>
-                <small>Kata pendek &middot; lambat &middot; santai</small>
-                <div class="best-line" data-best="easy">Terbaik: -</div>
+                <div class="diff-tags"><span class="diff-tag">Kata Pendek &amp; Santai</span></div>
+                <div class="best-line" data-best="easy"></div>
             </div>
             <div class="diff-card diff-medium" data-diff="medium">
                 <div class="diff-icon">
@@ -112,8 +139,8 @@
                     </svg>
                 </div>
                 <h3>MEDIUM</h3>
-                <small>Kata sedang &middot; kecepatan normal</small>
-                <div class="best-line" data-best="medium">Terbaik: -</div>
+                <div class="diff-tags"><span class="diff-tag">Kata Sedang &amp; Normal</span></div>
+                <div class="best-line" data-best="medium"></div>
             </div>
             <div class="diff-card diff-hard" data-diff="hard">
                 <div class="diff-icon">
@@ -124,8 +151,8 @@
                     </svg>
                 </div>
                 <h3>HARD</h3>
-                <small>Kata panjang &middot; cepat &middot; padat</small>
-                <div class="best-line" data-best="hard">Terbaik: -</div>
+                <div class="diff-tags"><span class="diff-tag">Kata Panjang &amp; Cepat</span></div>
+                <div class="best-line" data-best="hard"></div>
             </div>
         </div>
 
@@ -180,8 +207,6 @@
 
         <div class="game-stage">
             <canvas id="gameCanvas" width="800" height="360"></canvas>
-            <input type="text" id="hiddenTypingInput" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
-                   style="position:absolute; opacity:0; height:1px; width:1px; top:0; left:0; pointer-events:none;">
             <div class="footer-note" id="mobileHint" style="position:absolute; bottom:44px; left:50%; transform:translateX(-50%); display:none;">Tap layar untuk memunculkan keyboard</div>
 
             {{-- Efek nyawa berkurang: muncul di TENGAH layar, bukan hanya di dino --}}
@@ -298,20 +323,20 @@
     <div class="overlay hidden" id="confirmQuitOverlay">
         <div class="result-card confirm-card">
             <div class="result-icon result-icon-confirm">
-                <svg class="result-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="9"/>
-                    <path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.4-1.2 1.8-1.9 2.6-.4.4-.6.9-.6 1.4"/>
-                    <circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"/>
+                <svg class="result-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3.6 2.9 19.3a1 1 0 0 0 .87 1.5h16.46a1 1 0 0 0 .87-1.5L12 3.6Z"/>
+                    <path d="M12 10v4.4"/>
+                    <circle cx="12" cy="17.4" r="0.8" fill="currentColor" stroke="none"/>
                 </svg>
             </div>
             <h2 class="confirm-title pixel-font">KELUAR KE MENU?</h2>
-            <p class="confirm-text">Progres permainan saat ini akan hilang.</p>
+            <p class="confirm-text">Progres permainan saat ini <b>akan hilang</b>.</p>
             <div class="btn-row" style="margin-top:16px;">
                 <button class="btn btn-danger" id="confirmQuitYes">
                     <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9 17l11-11"/></svg>
                     <span>YA, KELUAR</span>
                 </button>
-                <button class="btn btn-secondary" id="confirmQuitNo">
+                <button class="btn btn-howto" id="confirmQuitNo">
                     <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
                     <span>BATAL</span>
                 </button>
@@ -323,36 +348,26 @@
     <div class="overlay hidden" id="howToOverlay">
         <div class="result-card howto-card">
             <h2 class="pixel-font howto-title">CARA BERMAIN</h2>
-            <div class="howto-steps">
+                        <div class="howto-steps">
                 <div class="howto-step">
-                    <span class="howto-ico ico-obstacle">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 9 6l3 7 2-4 7 11Z"/></svg>
-                    </span>
-                    <p>Kata muncul di atas rintangan darat &amp; serangan udara yang mendekat.</p>
+                    <span class="howto-ico">🌵</span>
+                    <p>Kata muncul di atas <b>rintangan darat</b> &amp; <b>serangan udara</b> yang mendekat.</p>
                 </div>
                 <div class="howto-step">
-                    <span class="howto-ico ico-key">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="13" rx="2.2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/></svg>
-                    </span>
-                    <p>Ketik kata itu sebelum rintangan mencapai dino.</p>
+                    <span class="howto-ico">⌨️</span>
+                    <p><b>Ketik kata itu</b> sebelum rintangan mencapai dino.</p>
                 </div>
                 <div class="howto-step">
-                    <span class="howto-ico ico-dino">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21c0-5 2.5-9 8-9s8 4 8 9"/><path d="M9 12V7a3 3 0 0 1 6 0v5"/></svg>
-                    </span>
-                    <p>Kata benar &rarr; dino otomatis melompat / menyerang serangan udara.</p>
+                    <span class="howto-ico">🦖</span>
+                    <p>Kata benar &rarr; dino otomatis <b>melompat</b> / <b>menyerang</b> serangan udara.</p>
                 </div>
                 <div class="howto-step">
-                    <span class="howto-ico ico-heart">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.2s-7.4-4.6-9.8-9.2C.6 7.6 2 4 5.6 3.4c2-.35 3.7.55 4.8 2.1a1 1 0 0 0 1.2 0c1.1-1.55 2.8-2.45 4.8-2.1C19.99 4 21.4 7.6 19.8 11c-.9 1.9-2.6 3.8-4.3 5.35"/></svg>
-                    </span>
+                    <span class="howto-ico">💔</span>
                     <p>Salah ketik atau rintangan terlewat = <b style="color:var(--hard)">1 nyawa hilang</b>.</p>
                 </div>
                 <div class="howto-step">
-                    <span class="howto-ico ico-trophy">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/><path d="M8 5H5a2 2 0 0 0 0 4h1.5M16 5h3a2 2 0 0 1 0 4h-1.5"/><path d="M12 12v3"/><path d="M9 20h6"/><path d="M10 17h4l.6 3H9.4l.6-3Z"/></svg>
-                    </span>
-                    <p>Nyawa habis = Game Over. Kejar skor tertinggi &amp; lihat sertifikatmu!</p>
+                    <span class="howto-ico">🏆</span>
+                    <p>Nyawa habis = Game Over. Kejar <b>skor tertinggi</b> &amp; lihat sertifikatmu!</p>
                 </div>
             </div>
             <div class="btn-row howto-actions">
@@ -368,7 +383,11 @@
     <div class="overlay hidden" id="assetLoadingOverlay">
         <div class="result-card loading-card">
             <img src="{{ asset('assets/images/logo.png') }}" alt="DinoTyping" class="loading-logo">
-            <h2 class="loading-title pixel-font">MEMUAT PERMAINAN...</h2>
+            <h2 class="loading-title pixel-font">
+                <span class="ld-full">MEMUAT PERMAINAN...</span>
+                <span class="ld-short">MEMUAT GAME</span>
+                <span class="ld-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            </h2>
             <p class="loading-sub">Menyiapkan seluruh aset, mohon tunggu sebentar.</p>
             <div class="loading-bar-track">
                 <div class="loading-bar-fill" id="loadingBarFill"></div>

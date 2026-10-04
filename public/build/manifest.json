@@ -28,7 +28,7 @@
     "src": "_instrument-sans-600-normal-B9e8oLYv.woff"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CZXr-zBI.css",
+    "file": "assets/app-DPVSVORu.css",
     "name": "app",
     "names": [
       "app.css"
@@ -37,7 +37,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-dFLZy5oX.js",
+    "file": "assets/app-Dew2Yck_.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -47,13 +47,13 @@
     ]
   },
   "resources/js/game.js": {
-    "file": "assets/game-BhVJCu2g.js",
+    "file": "assets/game-BuRYGtTk.js",
     "name": "game",
     "src": "resources/js/game.js",
     "isEntry": true
   },
   "resources/js/landing-demo.js": {
-    "file": "assets/landing-demo-DYQJNwIn.js",
+    "file": "assets/landing-demo-WDcpAHuY.js",
     "name": "landing-demo",
     "src": "resources/js/landing-demo.js",
     "isEntry": true
