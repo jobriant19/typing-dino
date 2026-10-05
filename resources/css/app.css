@@ -145,6 +145,15 @@ img, canvas{ image-rendering:auto; }
     box-shadow:6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light), inset 0 1px 0 rgba(255,255,255,.35);
 }
 .btn.btn-danger:hover{ background:linear-gradient(135deg, #fb8a8a, #b91c1c); }
+.btn.btn-amber{
+    color:#ffffff;
+    font-size:15px;
+    letter-spacing:.5px;
+    background:linear-gradient(135deg, #fcd34d, #f59e0b);
+    text-shadow:0 1px 1px rgba(146,64,14,.4);
+    box-shadow:6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.btn.btn-amber:hover{ background:linear-gradient(135deg, #fde68a, #d97706); }
 .diff-actions{ margin-top:18px; }
 .btn:disabled{ opacity:.45; cursor:not-allowed; box-shadow:none; }
 .btn-row{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
@@ -603,13 +612,38 @@ img, canvas{ image-rendering:auto; }
 @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.4;} }
 
 /* ===================== CERTIFICATE ===================== */
-.cert-wrap{ display:flex; flex-direction:column; align-items:center; gap:16px; }
-#certCanvas{ width:100%; max-width:900px; border-radius:16px; box-shadow:10px 10px 24px var(--shadow-dark), -10px -10px 24px var(--shadow-light); }
+.cert-page{
+    max-width:1100px;
+    height:100vh; height:100dvh;
+    min-height:0;
+    padding:14px; gap:12px;
+    justify-content:flex-start;
+    overflow:hidden;
+}
+.cert-page .title-bar{ flex:0 0 auto; padding:12px 18px; }
+.cert-wrap{
+    flex:1 1 auto; min-height:0;
+    display:flex; flex-direction:column; align-items:center;
+    gap:14px; padding:14px;
+}
+.cert-stage{
+    flex:1 1 auto; min-height:0; width:100%;
+    display:flex; align-items:center; justify-content:center;
+    padding:10px;
+    background:var(--bg);
+    border-radius:18px;
+    box-shadow:inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);
+}
+#certCanvas{ width:100%; height:100%; object-fit:contain; }
+.cert-wrap .btn-row{ flex:0 0 auto; gap:12px; }
+.cert-wrap .btn-row .btn{ padding:14px 22px; font-size:15px; text-decoration:none; }
+@media (max-height:700px){ .cert-page .title-bar .subtitle{ display:none; } }
 
 @media print{
     body *{ visibility:hidden; }
     #certCanvas, #certCanvas *{ visibility:visible; }
-    #certCanvas{ position:absolute; top:0; left:0; width:100%; box-shadow:none; }
+    #certCanvas{ position:absolute; top:0; left:0; width:100%; height:auto; box-shadow:none; }
+    @page{ size:landscape; margin:8mm; }
 }
 
 /* ===================== FOOTER ===================== */
@@ -922,13 +956,52 @@ img, canvas{ image-rendering:auto; }
 @keyframes loadingStripes{ to{ background-position:28px 0; } }
 .loading-card .loading-percent{
     display:inline-block;
-    margin:14px 0 0; padding:6px 22px;
-    font-size:26px; font-weight:900; letter-spacing:.5px;
+    margin:12px 0 0; padding:4px 16px;
+    font-size:17px; font-weight:900; letter-spacing:.5px;
     color:#15803d;
     background:#e8fbef;
     border-radius:999px;
     box-shadow:inset 2px 2px 5px rgba(34,197,94,.2), inset -2px -2px 5px rgba(255,255,255,.9);
 }
+
+/* ============================================================
+   TOMBOL SERAGAM (gaya popup konfirmasi) — Game Over, Nama Pemain, Jeda
+   ============================================================ */
+.welcome-actions{ gap:12px; }
+.welcome-actions .btn{ padding:14px 12px; font-size:15px; letter-spacing:.5px; }
+
+@media (min-width:641px){
+    #gameOverOverlay .btn-row{ gap:12px; margin-top:22px !important; }
+    #gameOverOverlay .btn-row .btn{ flex:1 1 calc(50% - 6px); min-width:0; padding:14px 12px; font-size:15px; letter-spacing:.5px; }
+    #gameOverOverlay .btn-row .btn:last-child{ flex-basis:100%; }
+}
+
+/* ===== Popup Jeda — gaya sama dgn konfirmasi keluar, ikon biru ===== */
+.pause-card{ max-width:400px; padding:30px 26px 26px; }
+.pause-card::before{ display:none; }
+.pause-card .result-icon{
+    width:88px; height:88px; margin-bottom:16px;
+    color:#ffffff;
+    background:linear-gradient(145deg, #7dd3fc, #2563eb);
+    box-shadow:0 10px 22px rgba(37,99,235,.42), 0 0 0 7px rgba(59,130,246,.14), inset 0 2px 0 rgba(255,255,255,.55);
+}
+.pause-card .result-icon-svg{ width:42px; height:42px; filter:drop-shadow(0 2px 2px rgba(30,64,175,.35)); }
+.pause-card .pause-title{ font-size:22px; font-weight:900; letter-spacing:.8px; margin:0 0 10px; }
+.pause-card .pause-text{ font-size:15.5px; font-weight:700; line-height:1.55; color:#4b5365; margin:0; }
+.pause-card .pause-text b{ color:#2563eb; font-weight:900; }
+.pause-card .btn-row{ margin-top:22px; }
+.pause-card .btn-row .btn{ padding:14px 12px; font-size:15px; }
+
+/* ============================================================
+   SEMUA TOMBOL: ikon & tulisan sejajar, sebaris, dan tepat di tengah
+   ============================================================ */
+.btn{ align-items:center; justify-content:center; line-height:1.2; }
+.btn > span{ display:block; line-height:1.2; }
+.btn .btn-icon, .btn .btn-icon-retry{ display:block; width:1.2em; height:1.2em; flex-shrink:0; }
+
+/* ===== Subtitle halaman sertifikat ===== */
+.cert-page .title-bar .subtitle{ font-size:16px; font-weight:800; color:#4b5365; letter-spacing:.3px; margin-top:6px; }
+.cert-page .title-bar .subtitle .cert-brand{ color:#16a34a; font-weight:900; letter-spacing:.8px; }
 
 /* ============================================================
    KHUSUS MOBILE (desktop tidak berubah)
@@ -947,7 +1020,7 @@ img, canvas{ image-rendering:auto; }
     .loading-card .loading-title{ font-size:22px; letter-spacing:1.2px; }
     .loading-card .loading-sub{ font-size:13px; margin-bottom:16px; }
     .loading-bar-track{ height:20px; }
-    .loading-card .loading-percent{ font-size:22px; padding:5px 18px; margin-top:12px; }
+    .loading-card .loading-percent{ font-size:15px; padding:3px 14px; margin-top:10px; }
 
     /* --- Landing demo --- */
     #landingScreen .diff-logo{ max-width:100px; }
@@ -991,11 +1064,11 @@ img, canvas{ image-rendering:auto; }
     .diff-actions{ flex-wrap:nowrap; gap:6px; }
     .diff-actions .btn{
         flex:1 1 0; min-width:0;
-        flex-direction:column; gap:4px;
-        padding:10px 3px; font-size:10px; letter-spacing:0; line-height:1.15;
+        flex-direction:row; gap:4px;
+        padding:12px 4px; white-space:nowrap;
+        font-size:clamp(7px, calc((100vw - 134px) / 25), 11px); letter-spacing:0;
         border-radius:12px;
     }
-    .diff-actions .btn-icon{ width:16px; height:16px; }
 
     /* --- Saat bermain: layar dikunci setinggi area terlihat (di atas keyboard HP) --- */
     body.is-playing{ position:fixed; width:100%; overflow:hidden; overscroll-behavior:none; }
@@ -1024,14 +1097,28 @@ img, canvas{ image-rendering:auto; }
     #gameOverOverlay .stat-grid{ gap:8px; margin-top:10px; }
     #gameOverOverlay .stat-box{ padding:9px 6px; }
     #gameOverOverlay .stat-box b{ font-size:16px; }
-    #gameOverOverlay .btn-row{ flex-wrap:nowrap; gap:6px; }
+    #gameOverOverlay .btn-row{ gap:8px; margin-top:16px !important; }
     #gameOverOverlay .btn-row .btn{
-        flex:1 1 0; min-width:0;
-        flex-direction:column; gap:4px;
-        padding:10px 3px; font-size:9.5px; letter-spacing:0; line-height:1.15;
+        flex:1 1 calc(50% - 4px); min-width:0;
+        gap:6px; padding:12px 8px; white-space:nowrap;
+        font-size:12.5px; letter-spacing:.3px;
         border-radius:12px;
     }
-    #gameOverOverlay .btn-row .btn-icon{ width:16px; height:16px; }
+    #gameOverOverlay .btn-row .btn:last-child{ flex-basis:100%; }
+    .welcome-actions .btn{ padding:12px 8px; font-size:12.5px; }
+    .pause-card{ padding:24px 16px 18px; max-width:320px; }
+    .pause-card .result-icon{ width:72px; height:72px; margin-bottom:12px; }
+    .pause-card .result-icon-svg{ width:36px; height:36px; }
+    .pause-card .pause-title{ font-size:18px; }
+    .pause-card .pause-text{ font-size:13.5px; }
+    .pause-card .btn-row .btn{ font-size:12.5px; padding:12px 8px; }
+    .cert-page{ padding:10px; gap:8px; }
+    .cert-wrap{ padding:10px; gap:10px; }
+    .cert-stage{ padding:6px; }
+    .cert-wrap .btn-row{ gap:8px; width:100%; }
+    .cert-wrap .btn-row .btn{ flex:1 1 calc(50% - 4px); min-width:0; gap:6px; padding:11px 8px; white-space:nowrap; font-size:12.5px; letter-spacing:.3px; }
+    .cert-wrap .btn-row .btn:last-child{ flex-basis:100%; }
+    .cert-page .title-bar .subtitle{ font-size:12px; }
 
     /* --- Popup konfirmasi keluar & cara bermain --- */
     .confirm-card{ padding:24px 16px 18px; max-width:320px; }

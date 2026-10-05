@@ -1902,7 +1902,8 @@ function showEndOverlay(elapsed, accuracy, best){
 // Menyegarkan badge rekor pada popup yang sudah tampil (dipanggil langsung
 // dgn rekor lokal, lalu lagi begitu rekor server terkonfirmasi).
 function updateRecordBadge(best){
-    const isNewRecord = best.highest_score === state.score;
+    // Rekor baru hanya dihitung kalau skor lebih dari 0
+    const isNewRecord = state.score > 0 && best.highest_score === state.score;
     applyGameOverTheme(isNewRecord);
 }
 

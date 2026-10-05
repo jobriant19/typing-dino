@@ -235,13 +235,14 @@
             <div class="overlay hidden" id="pauseOverlay">
                 <div class="result-card pause-card">
                     <div class="result-icon result-icon-pause">
-                        <svg class="result-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="6" y="4" width="4" height="16" rx="1.4"/>
-                            <rect x="14" y="4" width="4" height="16" rx="1.4"/>
+                        <svg class="result-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="6" y="4.5" width="4" height="15" rx="1.4" fill="currentColor"/>
+                            <rect x="14" y="4.5" width="4" height="15" rx="1.4" fill="currentColor"/>
                         </svg>
                     </div>
                     <h2 class="pause-title pixel-font">DIJEDA</h2>
-                    <div class="btn-row" style="margin-top:18px;">
+                    <p class="pause-text">Permainan <b>dijeda</b>. Lanjutkan kapan saja.</p>
+                    <div class="btn-row">
                         <button class="btn btn-start btn-block" id="resumePauseBtn">
                             <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                             <span>LANJUTKAN</span>
@@ -293,14 +294,14 @@
                         </div>
                     </div>
                     <div class="btn-row" style="margin-top:16px;">
-                        <button class="btn" id="retryBtnLose">
+                        <button class="btn btn-start" id="retryBtnLose">
                             <svg class="btn-icon btn-icon-retry" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20 12a8 8 0 1 1-2.34-5.66"/>
                                 <path d="M20 4v5h-5"/>
                             </svg>
                             <span>COBA LAGI</span>
                         </button>
-                        <button class="btn btn-yellow" id="certBtn">
+                        <button class="btn btn-amber" id="certBtn">
                             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/>
                                 <path d="M8 5H5a2 2 0 0 0 0 4h1.5M16 5h3a2 2 0 0 1 0 4h-1.5"/>
@@ -308,7 +309,7 @@
                             </svg>
                             <span>SERTIFIKAT</span>
                         </button>
-                        <button class="btn btn-secondary" id="menuBtnLose">
+                        <button class="btn btn-danger" id="menuBtnLose">
                             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M4 11.5 12 4l8 7.5"/>
                                 <path d="M6 10v9a1 1 0 0 0 1 1h4v-5h2v5h4a1 1 0 0 0 1-1v-9"/>
@@ -398,7 +399,7 @@
             <img src="{{ asset('assets/images/logo.png') }}" alt="DinoTyping" class="loading-logo">
             <h2 class="loading-title pixel-font">
                 <span>MEMUAT GAME</span>
-                <span class="ld-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+
             </h2>
             <p class="loading-sub" id="loadingStatus">Menyiapkan aset permainan...</p>
             <div class="loading-bar-track">
